@@ -2,7 +2,6 @@
   import { browser } from '$app/env';
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
-  import FreeBadge from '#lib/components/FreeBadge.svelte';
   import Header from '#lib/components/Header.svelte';
   import StatusBadge from '#lib/components/StatusBadge.svelte';
   import { CARTEX } from '#lib/data/cartex';
@@ -56,8 +55,6 @@
 </div>
 
 <div class="space-y-8 p-4">
-  <FreeBadge compact />
-
   <section class="fade-in rounded-2xl border border-white/60 bg-white/80 p-4 shadow-sm backdrop-blur">
     <div class="flex items-center justify-between">
       <h2 class="font-black">آمادگی شما</h2>
