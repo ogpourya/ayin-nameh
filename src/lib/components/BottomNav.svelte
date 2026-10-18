@@ -22,7 +22,10 @@
     if (normalize(page.url.pathname) !== HOME) return; // a real navigation lands on the home page
     const hash = hashOf(href);
     if (!hash) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!page.url.hash) {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       return;
     }
     if (page.url.hash === hash) {

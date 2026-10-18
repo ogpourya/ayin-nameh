@@ -43,4 +43,11 @@ test('corrections from scripts/convert-data.mjs survive regeneration', () => {
   assert.equal(answer(2, 21), 1);
   assert.equal(answer(7, 18), 3);
   assert.equal(answer(8, 8), 4);
+
+  // OCR typos the converter fixes; a regeneration that drops TEXT_FIXES brings these back.
+  const typos = ['نتایح', 'نکنولوژی', 'غریبلک', 'ضدگی', 'موظند', 'گذرکاه', 'خیره کنده', 'سوار قرار دارد'];
+  const remaining = CARTEX.flatMap((exam) => exam.questions).flatMap((q) => [q.text, ...q.options]).filter((s) =>
+    typos.some((typo) => s.includes(typo))
+  );
+  assert.deepEqual(remaining, []);
 });
