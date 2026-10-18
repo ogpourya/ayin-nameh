@@ -187,7 +187,7 @@
           src={assetUrl(question.image)}
           alt="تصویر سوال"
           loading="lazy"
-          class="mx-auto mb-3 max-h-52 object-contain"
+          class="mx-auto mb-3 max-h-52 rounded-xl bg-white p-2 object-contain"
         />
       {/if}
       <p class="font-bold leading-7">{question.text}</p>
@@ -293,7 +293,7 @@
             src={assetUrl(questions[wrongList[reviewAt]].image as string)}
             alt="تصویر سوال"
             loading="lazy"
-            class="mx-auto mb-3 max-h-52 object-contain"
+            class="mx-auto mb-3 max-h-52 rounded-xl bg-white p-2 object-contain"
           />
         {/if}
         <p class="font-bold leading-7">{questions[wrongList[reviewAt]].text}</p>

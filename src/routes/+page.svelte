@@ -143,7 +143,7 @@
               دیده شد
             </span>
           {/if}
-          <img src={assetUrl(exam.cover)} alt={exam.title} loading="lazy" class="h-36 w-full bg-slate-50 dark:bg-slate-800/50 object-cover object-top" />
+          <img src={assetUrl(exam.cover)} alt={exam.title} loading="lazy" class="h-36 w-full bg-white object-cover object-top" />
           <div class="p-3 text-center">
             <div class="text-sm font-bold">{exam.title}</div>
             <div class="mt-1 text-xs text-slate-500 dark:text-slate-400">{toPersianDigits(exam.questions.length)} سوال + برگه</div>
@@ -194,7 +194,7 @@
           href={signHref(category)}
           class="card-click block rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-3 text-center shadow-sm backdrop-blur hover:shadow-md"
         >
-          <img src={assetUrl(category.icon)} alt="" loading="lazy" class="h-20 w-full object-contain" />
+          <img src={assetUrl(category.icon)} alt="" loading="lazy" class="h-20 w-full rounded-xl bg-white p-1 object-contain" />
           <div class="mt-2 text-xs font-bold leading-6">{category.title}</div>
         </a>
       {/each}

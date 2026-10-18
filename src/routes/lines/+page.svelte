@@ -15,7 +15,7 @@
 <div class="fade-in space-y-3 p-4">
   {#each LINES as line (line.img)}
     <div class="rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
-      <img src={assetUrl(line.img)} alt="" loading="lazy" class="mb-3 max-h-40 w-full object-contain" />
+      <img src={assetUrl(line.img)} alt="" loading="lazy" class="mb-3 max-h-40 w-full rounded-xl bg-white p-2 object-contain" />
       <p class="text-sm leading-7 text-slate-700 dark:text-slate-200">{line.title}</p>
     </div>
   {/each}

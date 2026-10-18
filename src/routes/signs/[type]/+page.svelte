@@ -41,7 +41,7 @@
   <div class="fade-in grid grid-cols-2 gap-3 sm:grid-cols-3">
     {#each data.items as item (item.img)}
       <div class="rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-2 text-center shadow-sm backdrop-blur">
-        <img src={assetUrl(item.img)} alt={progress.hideTexts ? '' : item.title} loading="lazy" class="h-28 w-full object-contain" />
+        <img src={assetUrl(item.img)} alt={progress.hideTexts ? '' : item.title} loading="lazy" class="h-28 w-full rounded-xl bg-white p-1 object-contain" />
         <div class="mt-1 text-[12px] leading-6 {progress.hideTexts ? 'invisible' : ''}">{item.title}</div>
       </div>
     {/each}

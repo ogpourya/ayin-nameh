@@ -37,7 +37,7 @@
     <div class="space-y-3">
       {#each CONCEPT_SHAPES as item (item.title)}
         <div class="flex items-start gap-3 rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
-          <img src={assetUrl(item.img)} alt="" loading="lazy" class="h-16 w-16 shrink-0 object-contain" />
+          <img src={assetUrl(item.img)} alt="" loading="lazy" class="h-16 w-16 shrink-0 rounded-lg bg-white p-1 object-contain" />
           <div>
             <div class="font-bold">{item.title}</div>
             <div class="mt-1 text-sm leading-7 text-slate-600 dark:text-slate-300">{item.desc}</div>
