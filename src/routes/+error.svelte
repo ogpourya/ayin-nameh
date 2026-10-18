@@ -2,11 +2,10 @@
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import Header from '#lib/components/Header.svelte';
+  import Seo from '#lib/components/Seo.svelte';
 </script>
 
-<svelte:head>
-  <title>خطا | آیین‌نامه رانندگی</title>
-</svelte:head>
+<Seo title="خطا | آیین‌نامه رانندگی" description="صفحه مورد نظر پیدا نشد." noindex />
 
 <Header title="خطا" />
 
@@ -15,7 +14,7 @@
   <p class="mt-4 text-lg font-black">
     {page.status === 404 ? 'این صفحه پیدا نشد' : 'خطای غیرمنتظره‌ای رخ داد'}
   </p>
-  <p class="mt-2 text-sm text-slate-500">{page.error?.message ?? ''}</p>
+  <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">{page.error?.message ?? ''}</p>
   <a
     href={resolve('/')}
     class="mt-6 inline-block rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white transition hover:bg-indigo-700 active:scale-95"

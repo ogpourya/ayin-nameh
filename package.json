@@ -9,11 +9,12 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "node scripts/generate-sitemap.mjs && vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "test": "node --test",
+    "sitemap": "node scripts/generate-sitemap.mjs",
     "convert:data": "node scripts/convert-data.mjs"
   },
   "devDependencies": {

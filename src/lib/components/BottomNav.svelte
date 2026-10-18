@@ -14,7 +14,7 @@
 </script>
 
 <nav
-  class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200/70 bg-white/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
+  class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 dark:border-slate-700/70 bg-white/85 dark:bg-slate-900/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
   aria-label="ناوبری اصلی"
 >
   <div class="mx-auto grid max-w-3xl grid-cols-4">
@@ -22,7 +22,7 @@
       <a
         href={item.href}
         class="flex min-h-14 flex-col items-center justify-center gap-1 text-[11px] font-bold transition
-          {isActive(item.href) ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800'}"
+          {isActive(item.href) ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'}"
       >
         <item.icon size={20} />
         <span>{item.label}</span>

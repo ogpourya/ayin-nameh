@@ -14,6 +14,10 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
   html {
     font-family: var(--font-vazirmatn);
   }
@@ -26,6 +30,19 @@
     color: #1e293b;
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background:
+        radial-gradient(60rem 30rem at 100% 0%, #312e8140 0%, transparent 60%),
+        radial-gradient(50rem 24rem at 0% 100%, #064e3b40 0%, transparent 55%), #0f172a;
+      color: #e2e8f0;
+    }
+
+    ::selection {
+      background: #4338ca;
+    }
   }
 
   ::selection {

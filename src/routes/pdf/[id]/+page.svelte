@@ -2,6 +2,7 @@
   import { resolve } from '$app/paths';
   import { ChevronLeft, ChevronRight, X } from '@lucide/svelte';
   import Header from '#lib/components/Header.svelte';
+  import Seo from '#lib/components/Seo.svelte';
   import { progress } from '#lib/stores/examProgress.svelte';
   import { assetUrl } from '#lib/utils/asset';
   import { toPersianDigits } from '#lib/utils/formatters';
@@ -31,16 +32,17 @@
   }
 </script>
 
-<svelte:head>
-  <title>{data.exam.title} | آیین‌نامه رانندگی</title>
-</svelte:head>
+<Seo
+  title={`${data.exam.title} | سوالات اصلی آیین‌نامه رانندگی با تصویر`}
+  description={`مشاهده تصویری ${data.exam.title} به‌همراه ${toPersianDigits(data.exam.questions.length)} سوال اصلی آیین‌نامه رانندگی؛ آمادگی کاملاً رایگان برای آزمون اصلی.`}
+/>
 
 <svelte:window onkeydown={onKeydown} />
 
 <Header title={data.exam.title} />
 
 <div class="p-3">
-  <div class="mb-3 flex items-center justify-between px-1 text-sm text-slate-500">
+  <div class="mb-3 flex items-center justify-between px-1 text-sm text-slate-500 dark:text-slate-400">
     <span>{toPersianDigits(pages.length)} صفحه</span>
     <a
       href={resolve('/quiz/[id]', { id: String(data.index) })}
@@ -56,7 +58,7 @@
         type="button"
         onclick={() => (lightbox = i)}
         aria-label="بزرگ‌نمایی صفحه {toPersianDigits(i + 1)}"
-        class="card-click block w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+        class="card-click block w-full overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm"
       >
         <img src={page} alt="صفحه {toPersianDigits(i + 1)} برگه {data.exam.title}" loading="lazy" class="w-full" />
       </button>

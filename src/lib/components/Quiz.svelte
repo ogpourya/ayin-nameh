@@ -106,13 +106,13 @@
   function optionClass(choice: number, correctAnswer: number, pickedChoice: number | null) {
     if (choice === correctAnswer) return 'border-green-500 bg-green-50';
     if (choice === pickedChoice) return 'border-red-500 bg-red-50';
-    return 'border-slate-200 bg-white opacity-50';
+    return 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 opacity-50';
   }
 
   function optionBadgeClass(choice: number, correctAnswer: number, pickedChoice: number | null) {
     if (choice === correctAnswer) return 'bg-green-600 text-white';
     if (choice === pickedChoice) return 'bg-red-600 text-white';
-    return 'bg-slate-200 text-slate-600';
+    return 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
   }
 </script>
 
@@ -127,11 +127,11 @@
         class="flex min-h-12 w-full items-center gap-3 rounded-xl border-2 px-3 py-2 text-right transition
           {revealed
           ? optionClass(choice, q.correctAnswer, pickedChoice)
-          : 'border-slate-200 bg-white hover:border-indigo-300 active:scale-[0.99]'}"
+          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-300 active:scale-[0.99]'}"
       >
         <span
           class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sm font-bold
-            {revealed ? optionBadgeClass(choice, q.correctAnswer, pickedChoice) : 'bg-slate-100 text-slate-600'}"
+            {revealed ? optionBadgeClass(choice, q.correctAnswer, pickedChoice) : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}"
         >
           {toPersianDigits(choice)}
         </span>
@@ -146,23 +146,13 @@
   </div>
 {/snippet}
 
-{#snippet feedbackCard(q: CartexQuestion, pickedChoice: number | null)}
-  <div class="fade-in mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm leading-7 text-amber-900">
-    <p class="font-bold {pickedChoice === q.correctAnswer ? 'text-green-700' : 'text-red-700'}">
-      {pickedChoice === q.correctAnswer
-        ? 'پاسخ درست ✓'
-        : `پاسخ صحیح گزینه ${toPersianDigits(q.correctAnswer)} ✗`}
-    </p>
-  </div>
-{/snippet}
-
 <svelte:window onkeydown={onKeydown} />
 
 <Header
   title={`آزمون اصلی ${toPersianDigits(index)}`}
   subtitle={mode === 'quiz' ? `${toPersianDigits(current + 1)} / ${toPersianDigits(questions.length)}` : ''}
 >
-  <span class="flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600">
+  <span class="flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs font-bold text-slate-600 dark:text-slate-300">
     <Clock size={14} />
     {formatDuration(elapsed)}
   </span>
@@ -170,16 +160,16 @@
 
 <div class="p-4">
   {#if mode === 'quiz'}
-    <div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-valuenow={current + 1} aria-valuemin={1} aria-valuemax={questions.length}>
+    <div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" role="progressbar" aria-valuenow={current + 1} aria-valuemin={1} aria-valuemax={questions.length}>
       <div
         class="h-full rounded-full bg-indigo-600 transition-all duration-300"
         style={`width: ${((current + 1) / questions.length) * 100}%`}
       ></div>
     </div>
 
-    <div class="fade-in rounded-2xl border border-white/60 bg-white/80 p-4 shadow-sm backdrop-blur">
+    <div class="fade-in rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
       <div class="mb-2 flex items-start justify-between gap-2">
-        <span class="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-600">
+        <span class="rounded-full bg-indigo-50 dark:bg-indigo-950/70 px-2.5 py-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400">
           سوال {toPersianDigits(current + 1)}
         </span>
         <button
@@ -187,9 +177,9 @@
           onclick={() => progress.toggleBookmark(index, question.id)}
           aria-label="نشان‌کردن سوال برای مرور"
           aria-pressed={isBookmarked}
-          class="grid h-9 w-9 place-items-center rounded-full transition hover:bg-slate-100"
+          class="grid h-9 w-9 place-items-center rounded-full transition hover:bg-slate-100 dark:hover:bg-slate-800"
         >
-          <Bookmark size={18} class={isBookmarked ? 'fill-amber-400 text-amber-500' : 'text-slate-400'} />
+          <Bookmark size={18} class={isBookmarked ? 'fill-amber-400 text-amber-500' : 'text-slate-400 dark:text-slate-500 dark:text-slate-400'} />
         </button>
       </div>
       {#if question.image}
@@ -206,7 +196,6 @@
     {@render optionList(question, picked, picked !== null)}
 
     {#if picked !== null}
-      {@render feedbackCard(question, picked)}
       <button
         type="button"
         onclick={next}
@@ -215,7 +204,7 @@
         {current + 1 === questions.length ? 'دیدن نتیجه' : 'سوال بعدی'}
         <ArrowLeft size={18} />
       </button>
-      <p class="mt-2 text-center text-[11px] text-slate-400">
+      <p class="mt-2 text-center text-[11px] text-slate-400 dark:text-slate-500 dark:text-slate-400">
         میان‌بر: کلید ۱ تا ۴ برای انتخاب گزینه، Enter برای ادامه
       </p>
     {/if}
@@ -229,7 +218,7 @@
         {passed ? 'قبول شدید!' : 'مردود شدید'}
       </div>
 
-      <div class="mx-auto mt-6 max-w-sm space-y-2 rounded-2xl border border-white/60 bg-white/80 p-4 text-sm leading-8 shadow-sm backdrop-blur">
+      <div class="mx-auto mt-6 max-w-sm space-y-2 rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 text-sm leading-8 shadow-sm backdrop-blur">
         <div class="flex justify-between">
           <span>پاسخ درست</span>
           <b class="text-green-600">{toPersianDigits(correctCount)} از {toPersianDigits(questions.length)}</b>
@@ -246,7 +235,7 @@
           <span>زمان</span>
           <b>{formatDuration(elapsed)}</b>
         </div>
-        <div class="flex justify-between border-t border-slate-200 pt-2 text-xs text-slate-500">
+        <div class="flex justify-between border-t border-slate-200 dark:border-slate-700 pt-2 text-xs text-slate-500 dark:text-slate-400">
           <span>حد نصاب</span>
           <span>{toPersianDigits(passRule)} درست و حداکثر {toPersianDigits(PASS_RULES.maxWrong)} غلط</span>
         </div>
@@ -274,7 +263,7 @@
           </button>
           <a
             href={resolve('/')}
-            class="flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white py-3 font-bold text-slate-700 transition hover:bg-slate-50 active:scale-[0.99]"
+            class="flex min-h-12 items-center justify-center rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.99]"
           >
             صفحه اصلی
           </a>
@@ -293,12 +282,12 @@
   {:else}
     <div class="fade-in">
       <div class="mb-3 flex items-center justify-between">
-        <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
+        <span class="rounded-full bg-amber-100 dark:bg-amber-950 px-3 py-1 text-xs font-bold text-amber-800 dark:text-amber-300">
           مرور اشتباهات {toPersianDigits(reviewAt + 1)} از {toPersianDigits(wrongList.length)}
         </span>
       </div>
 
-      <div class="rounded-2xl border border-white/60 bg-white/80 p-4 shadow-sm backdrop-blur">
+      <div class="rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
         {#if questions[wrongList[reviewAt]].image}
           <img
             src={assetUrl(questions[wrongList[reviewAt]].image as string)}
@@ -311,14 +300,13 @@
       </div>
 
       {@render optionList(questions[wrongList[reviewAt]], answers[wrongList[reviewAt]], true)}
-      {@render feedbackCard(questions[wrongList[reviewAt]], answers[wrongList[reviewAt]])}
 
       <div class="mt-4 grid grid-cols-2 gap-3">
         <button
           type="button"
           disabled={reviewAt === 0}
           onclick={() => (reviewAt -= 1)}
-          class="min-h-12 rounded-xl border border-slate-300 bg-white py-3 font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40"
+          class="min-h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40"
         >
           قبلی
         </button>
@@ -326,7 +314,7 @@
           type="button"
           disabled={reviewAt + 1 >= wrongList.length}
           onclick={() => (reviewAt += 1)}
-          class="min-h-12 rounded-xl border border-slate-300 bg-white py-3 font-bold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40"
+          class="min-h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40"
         >
           بعدی
         </button>
