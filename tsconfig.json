@@ -1,0 +1,13 @@
+{
+  "extends": "$app/tsconfig",
+  "include": ["src"],
+  "exclude": ["build", "tests"],
+  "compilerOptions": {
+    "strict": true,
+    "sourceMap": true,
+    "paths": {
+      "#lib": ["./src/lib"],
+      "#lib/*": ["./src/lib/*"]
+    }
+  }
+}
