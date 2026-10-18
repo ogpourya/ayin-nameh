@@ -26,7 +26,9 @@ class ExamProgress {
     if (!browser || this.ready) return;
     for (let exam = 1; exam <= CARTEX.length; exam += 1) {
       const status = Number(localStorage.getItem(STATUS_KEY(exam)) ?? 0);
-      if (status) this.statuses[exam] = status;
+      if (status === STATUS.passed || status === STATUS.failed || status === STATUS.inProgress) {
+        this.statuses[exam] = status;
+      }
       if (localStorage.getItem(VISITED_KEY(exam)) === 'true') this.visited[exam] = true;
     }
     try {
@@ -50,12 +52,9 @@ class ExamProgress {
     this.#write(STATUS_KEY(exam), String(status));
   }
 
-  /** Mark an exam as started unless it was already passed or in progress. */
+  /** Mark an exam as started unless it already has history (passed, failed or in progress). */
   startExam(exam: number) {
-    const status = this.getStatus(exam);
-    if (status !== STATUS.passed && status !== STATUS.inProgress) {
-      this.setStatus(exam, STATUS.inProgress);
-    }
+    if (this.getStatus(exam) === STATUS.none) this.setStatus(exam, STATUS.inProgress);
   }
 
   markVisited(exam: number) {

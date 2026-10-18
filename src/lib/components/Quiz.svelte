@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
+  import { untrack } from 'svelte';
   import { ArrowLeft, Bookmark, Check, Clock, ListChecks, RotateCcw, X } from '@lucide/svelte';
   import Header from '#lib/components/Header.svelte';
   import { STATUS, progress } from '#lib/stores/examProgress.svelte';
@@ -36,7 +37,9 @@
   const isBookmarked = $derived(progress.isBookmarked(index, question.id));
 
   $effect(() => {
-    progress.startExam(index);
+    // Track only the exam id: the status write below must not re-trigger this effect.
+    const examIndex = index;
+    untrack(() => progress.startExam(examIndex));
   });
 
   $effect(() => {
@@ -48,7 +51,7 @@
   });
 
   function choose(choice: number) {
-    if (picked !== null) return;
+    if (mode !== 'quiz' || picked !== null) return;
     picked = choice;
     answers[current] = choice;
     if (choice === question.correctAnswer) correctCount += 1;
@@ -61,6 +64,7 @@
 
   function next() {
     if (current + 1 >= questions.length) {
+      elapsed = Math.floor((Date.now() - startedAt) / 1000);
       progress.setStatus(index, passed ? STATUS.passed : STATUS.failed);
       mode = 'result';
     } else {
@@ -88,6 +92,11 @@
     scrollTop();
   }
 
+  function goReview(at: number) {
+    reviewAt = at;
+    scrollTop();
+  }
+
   function onKeydown(event: KeyboardEvent) {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     const key = persianKeyAlias[event.key] ?? event.key;
@@ -109,8 +118,8 @@
       event.preventDefault();
       retry();
     } else if (mode === 'review') {
-      if (key === 'ArrowLeft' && reviewAt + 1 < wrongList.length) reviewAt += 1;
-      else if (key === 'ArrowRight' && reviewAt > 0) reviewAt -= 1;
+      if (key === 'ArrowLeft' && reviewAt + 1 < wrongList.length) goReview(reviewAt + 1);
+      else if (key === 'ArrowRight' && reviewAt > 0) goReview(reviewAt - 1);
     }
   }
 
@@ -305,32 +314,43 @@
       </div>
     </div>
   {:else}
+    {@const rq = questions[wrongList[reviewAt]]}
+    {@const rqBookmarked = progress.isBookmarked(index, rq.id)}
     <div class="fade-in">
-      <div class="mb-3 flex items-center justify-between">
+      <div class="mb-3 flex items-center justify-between gap-2">
         <span class="rounded-full bg-amber-100 dark:bg-amber-950 px-3 py-1 text-xs font-bold text-amber-800 dark:text-amber-300">
           مرور اشتباهات {toPersianDigits(reviewAt + 1)} از {toPersianDigits(wrongList.length)}
         </span>
+        <button
+          type="button"
+          onclick={() => progress.toggleBookmark(index, rq.id)}
+          aria-label="نشان‌کردن سوال برای مرور"
+          aria-pressed={rqBookmarked}
+          class="grid h-9 w-9 shrink-0 place-items-center rounded-full transition hover:bg-slate-900/5 dark:hover:bg-white/10"
+        >
+          <Bookmark size={18} class={rqBookmarked ? 'fill-amber-400 text-amber-500' : 'text-slate-400 dark:text-slate-500'} />
+        </button>
       </div>
 
  <div class="rounded-3xl glass p-4 ">
-        {#if questions[wrongList[reviewAt]].image}
+        {#if rq.image}
           <img
-            src={assetUrl(questions[wrongList[reviewAt]].image as string)}
+            src={assetUrl(rq.image as string)}
             alt="تصویر سوال"
             loading="lazy"
             class="mx-auto mb-3 max-h-52 rounded-xl bg-white p-2 object-contain"
           />
         {/if}
-        <p class="font-bold leading-7">{questions[wrongList[reviewAt]].text}</p>
+        <p class="font-bold leading-7">{rq.text}</p>
       </div>
 
-      {@render optionList(questions[wrongList[reviewAt]], answers[wrongList[reviewAt]], true)}
+      {@render optionList(rq, answers[wrongList[reviewAt]], true)}
 
       <div class="mt-4 grid grid-cols-2 gap-3">
         <button
           type="button"
           disabled={reviewAt === 0}
-          onclick={() => (reviewAt -= 1)}
+          onclick={() => goReview(reviewAt - 1)}
           class="min-h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40"
         >
           قبلی
@@ -338,7 +358,7 @@
         <button
           type="button"
           disabled={reviewAt + 1 >= wrongList.length}
-          onclick={() => (reviewAt += 1)}
+          onclick={() => goReview(reviewAt + 1)}
           class="min-h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40"
         >
           بعدی

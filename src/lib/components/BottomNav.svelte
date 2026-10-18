@@ -13,6 +13,25 @@
   // GitHub Pages and resolve() disagree about the root trailing slash; compare without it.
   const normalize = (url: string) => url.replace(/\/+(?=$|#)/, '');
   const isActive = (href: string) => normalize(`${page.url.pathname}${page.url.hash}`) === normalize(href);
+
+  const HOME = normalize(resolve('/'));
+  const hashOf = (href: string) => (href.includes('#') ? href.slice(href.indexOf('#')) : '');
+
+  /** On the home page the URL often already carries the target hash, so navigation alone would do nothing. Scroll by hand then. */
+  function onNavClick(event: MouseEvent, href: string) {
+    if (normalize(page.url.pathname) !== HOME) return; // a real navigation lands on the home page
+    const hash = hashOf(href);
+    if (!hash) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (page.url.hash === hash) {
+      event.preventDefault();
+      document
+        .getElementById(decodeURIComponent(hash.slice(1)))
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 </script>
 
 <nav
@@ -23,6 +42,7 @@
     {#each items as item (item.label)}
       <a
         href={item.href}
+        onclick={(event) => onNavClick(event, item.href)}
         class="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-3xl text-[11px] font-bold transition
           {isActive(item.href)
           ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30'
