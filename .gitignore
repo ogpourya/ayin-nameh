@@ -101,6 +101,10 @@ dist
 # Static adapter output
 build/
 
+# Local scan/dump artifacts from external tooling
+code-dump.txt
+repo-scan.txt
+
 # vitepress build output
 **/.vitepress/dist
 
