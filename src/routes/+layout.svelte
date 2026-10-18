@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import type { Snippet } from 'svelte';
   import '../app.css';
   import BottomNav from '#lib/components/BottomNav.svelte';
@@ -7,11 +6,12 @@
 
   let { children }: { children: Snippet } = $props();
 
-  onMount(() => progress.init());
+  // The store hydrates itself on construction (client) so early child effects cannot clobber it.
+  progress.init();
 </script>
 
 <div class="mx-auto flex min-h-dvh max-w-3xl flex-col">
-  <main class="flex-1 pb-24">
+  <main class="flex-1 pb-28">
     {@render children()}
   </main>
 

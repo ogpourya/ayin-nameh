@@ -67,7 +67,7 @@
 </div>
 
 {#if lightbox !== null}
-  <div class="fixed inset-0 z-50">
+  <div class="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="نمایش بزرگ برگه">
     <button
       type="button"
       class="absolute inset-0 h-full w-full cursor-zoom-out bg-slate-950/90 backdrop-blur-sm"

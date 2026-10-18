@@ -33,14 +33,14 @@
 
 <div class="p-3">
   {#if progress.hideTexts}
-    <p class="mb-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/70 px-3 py-2 text-center text-[11px] font-bold text-indigo-700 dark:text-indigo-300">
+    <p class="mb-3 rounded-2xl bg-indigo-500/15 px-3 py-2 text-center text-[11px] font-bold text-indigo-700 dark:text-indigo-300">
       حالت سنجش حافظه فعال است — نام تابلوها پنهان شد
     </p>
   {/if}
 
   <div class="fade-in grid grid-cols-2 gap-3 sm:grid-cols-3">
     {#each data.items as item (item.img)}
-      <div class="rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-2 text-center shadow-sm backdrop-blur">
+ <div class="rounded-3xl glass p-2 text-center ">
         <img src={assetUrl(item.img)} alt={progress.hideTexts ? '' : item.title} loading="lazy" class="h-28 w-full rounded-xl bg-white p-1 object-contain" />
         <div class="mt-1 text-[12px] leading-6 {progress.hideTexts ? 'invisible' : ''}">{item.title}</div>
       </div>

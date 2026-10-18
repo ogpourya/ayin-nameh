@@ -16,6 +16,11 @@ class ExamProgress {
   hideTexts = $state(false);
   ready = $state(false);
 
+  constructor() {
+    // Hydrate before any child effect can write; effects run before a parent's onMount.
+    if (browser) this.init();
+  }
+
   /** Load persisted state from localStorage. Client-only; call once on mount. */
   init() {
     if (!browser || this.ready) return;

@@ -10,19 +10,23 @@
     { label: 'تابلوها', href: resolve('/#signs'), icon: LayoutGrid }
   ];
 
-  const isActive = (href: string) => `${page.url.pathname}${page.url.hash}` === href;
+  // GitHub Pages and resolve() disagree about the root trailing slash; compare without it.
+  const normalize = (url: string) => url.replace(/\/+(?=$|#)/, '');
+  const isActive = (href: string) => normalize(`${page.url.pathname}${page.url.hash}`) === normalize(href);
 </script>
 
 <nav
-  class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 dark:border-slate-700/70 bg-white/85 dark:bg-slate-900/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
+  class="fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
   aria-label="ناوبری اصلی"
 >
-  <div class="mx-auto grid max-w-3xl grid-cols-4">
+  <div class="glass mx-auto grid max-w-md grid-cols-4 gap-1 rounded-[1.75rem] p-1.5">
     {#each items as item (item.label)}
       <a
         href={item.href}
-        class="flex min-h-14 flex-col items-center justify-center gap-1 text-[11px] font-bold transition
-          {isActive(item.href) ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800'}"
+        class="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-3xl text-[11px] font-bold transition
+          {isActive(item.href)
+          ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30'
+          : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'}"
       >
         <item.icon size={20} />
         <span>{item.label}</span>

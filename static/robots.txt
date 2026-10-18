@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ogpourya.github.io/ayin-nameh/sitemap.xml

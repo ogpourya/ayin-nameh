@@ -17,7 +17,7 @@
     <h2 class="mb-3 font-black">مفهوم رنگ‌ها در علائم عبور و مرور</h2>
     <div class="space-y-3">
       {#each CONCEPT_COLORS as item (item.title)}
-        <div class="flex items-start gap-3 rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
+ <div class="flex items-start gap-3 rounded-3xl glass p-4 ">
           <div
             class="h-14 w-14 shrink-0 rounded-xl border border-black/10"
             style={`background: ${item.color}`}
@@ -36,8 +36,8 @@
     <h2 class="mb-3 font-black">مفهوم شکل‌ها در علائم عبور و مرور</h2>
     <div class="space-y-3">
       {#each CONCEPT_SHAPES as item (item.title)}
-        <div class="flex items-start gap-3 rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
-          <img src={assetUrl(item.img)} alt="" loading="lazy" class="h-16 w-16 shrink-0 rounded-lg bg-white p-1 object-contain" />
+ <div class="flex items-start gap-3 rounded-3xl glass p-4 ">
+          <img src={assetUrl(item.img)} alt={item.title} loading="lazy" class="h-16 w-16 shrink-0 rounded-lg bg-white p-1 object-contain" />
           <div>
             <div class="font-bold">{item.title}</div>
             <div class="mt-1 text-sm leading-7 text-slate-600 dark:text-slate-300">{item.desc}</div>

@@ -44,7 +44,8 @@
         inLanguage: 'fa-IR',
         isAccessibleForFree: true,
         provider: { '@type': 'Organization', name: 'آیین‌نامه رانندگی', url: 'https://ogpourya.github.io/ayin-nameh/' },
-        offers: { '@type': 'Offer', price: 0, priceCurrency: 'IRR', availability: 'https://schema.org/InStock' }
+        offers: { '@type': 'Offer', price: 0, priceCurrency: 'IRR', availability: 'https://schema.org/InStock' },
+        hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'online' }
       }
     ]
   };
@@ -65,12 +66,18 @@
   };
 
   // In-page anchors (#exams / #sheets / #signs) arrive either from the bottom nav or an in-page link.
+  let lastHash = '';
   $effect(() => {
     const hash = page.url.hash;
-    if (!browser || !hash) return;
-    requestAnimationFrame(() =>
-      document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    );
+    if (!browser || hash === lastHash) return;
+    const hadHash = lastHash !== '';
+    lastHash = hash;
+    if (hash) {
+      const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+      requestAnimationFrame(() => target?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    } else if (hadHash) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   });
 </script>
 
@@ -82,7 +89,7 @@
 
 <Header title={`${META.title} رانندگی`} back={false} />
 
-<div class="relative">
+<div class="relative overflow-hidden rounded-b-3xl">
   <img src={assetUrl('assets/img/header.webp')} alt="" class="h-40 w-full object-cover" />
   <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
   <div class="absolute inset-x-0 bottom-0 p-4 text-white">
@@ -94,17 +101,17 @@
 <div class="space-y-8 p-4">
   <section class="fade-in grid grid-cols-2 gap-3 sm:grid-cols-4">
     {#each stats as stat (stat.label)}
-      <div class="rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-3 text-center shadow-sm backdrop-blur">
+ <div class="rounded-3xl glass p-3 text-center ">
         <div class="text-2xl font-black text-indigo-600 dark:text-indigo-400">{toPersianDigits(stat.value)}</div>
         <div class="mt-1 text-[11px] font-bold text-slate-500 dark:text-slate-400">{stat.label}</div>
       </div>
     {/each}
   </section>
 
-  <section class="fade-in rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
+ <section class="fade-in rounded-3xl glass p-4 ">
     <div class="flex items-center justify-between">
       <h2 class="font-black">آمادگی شما</h2>
-      <span class="rounded-full bg-indigo-50 dark:bg-indigo-950/70 px-3 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+      <span class="rounded-full bg-indigo-500/15 px-3 py-1 text-xs font-bold text-indigo-700 dark:text-indigo-300">
         {formatPercent(readiness)}
       </span>
     </div>
@@ -118,12 +125,12 @@
       ></div>
     </div>
     <div class="mt-3 flex flex-wrap gap-2 text-[11px] font-bold">
-      <span class="rounded-full bg-green-100 dark:bg-green-950 px-2 py-1 text-green-700 dark:text-green-300">قبول {toPersianDigits(counts.passed)}</span>
-      <span class="rounded-full bg-red-100 dark:bg-red-950 px-2 py-1 text-red-700 dark:text-red-300">مردود {toPersianDigits(counts.failed)}</span>
-      <span class="rounded-full bg-indigo-100 dark:bg-indigo-900/70 px-2 py-1 text-indigo-700 dark:text-indigo-300">
+      <span class="rounded-full bg-green-500/15 px-2 py-1 text-green-700 dark:text-green-300">قبول {toPersianDigits(counts.passed)}</span>
+      <span class="rounded-full bg-red-500/15 px-2 py-1 text-red-700 dark:text-red-300">مردود {toPersianDigits(counts.failed)}</span>
+      <span class="rounded-full bg-indigo-500/15 px-2 py-1 text-indigo-700 dark:text-indigo-300">
         در حال انجام {toPersianDigits(counts.inProgress)}
       </span>
-      <span class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-1 text-slate-600 dark:text-slate-300">
+      <span class="rounded-full bg-slate-900/5 px-2 py-1 text-slate-600 dark:bg-white/10 dark:text-slate-300">
         شروع نشده {toPersianDigits(counts.notStarted)}
       </span>
     </div>
@@ -136,7 +143,7 @@
       {#each CARTEX as exam, i (exam.title)}
         <a
           href={resolve('/pdf/[id]', { id: String(i + 1) })}
-          class="card-click relative block overflow-hidden rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 shadow-sm backdrop-blur hover:shadow-md"
+ class="card-click relative block overflow-hidden rounded-3xl glass "
         >
           {#if progress.visited[i + 1]}
             <span class="absolute left-2 top-2 z-10 rounded-full bg-indigo-600 px-2 py-0.5 text-[11px] font-bold text-white">
@@ -163,10 +170,10 @@
         {@const bookmarks = progress.bookmarkCountFor(i + 1)}
         <a
           href={resolve('/quiz/[id]', { id: String(i + 1) })}
-          class="card-click block rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-3 shadow-sm backdrop-blur hover:shadow-md"
+ class="card-click block rounded-3xl glass p-3 "
         >
           <div class="flex items-center justify-between">
-            <div class="grid h-11 w-11 place-items-center rounded-xl bg-indigo-50 dark:bg-indigo-950/70 text-lg font-black text-indigo-600 dark:text-indigo-400">
+            <div class="grid h-11 w-11 place-items-center rounded-2xl bg-indigo-500/15 text-lg font-black text-indigo-600 dark:text-indigo-400">
               {toPersianDigits(i + 1)}
             </div>
             <StatusBadge status={progress.getStatus(i + 1)} />
@@ -192,7 +199,7 @@
       {#each SIGN_TYPES as category (category.id)}
         <a
           href={signHref(category)}
-          class="card-click block rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-3 text-center shadow-sm backdrop-blur hover:shadow-md"
+ class="card-click block rounded-3xl glass p-3 text-center "
         >
           <img src={assetUrl(category.icon)} alt="" loading="lazy" class="h-20 w-full rounded-xl bg-white p-1 object-contain" />
           <div class="mt-2 text-xs font-bold leading-6">{category.title}</div>

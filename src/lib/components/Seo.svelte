@@ -34,19 +34,23 @@
 <svelte:head>
   <title>{title}</title>
   <meta name="description" content={description} />
-  <link rel="canonical" href={canonical} />
-  {#if noindex}<meta name="robots" content="noindex" />{/if}
+  {#if noindex}
+    <meta name="robots" content="noindex" />
+  {:else}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:url" content={canonical} />
+  {/if}
   <meta property="og:site_name" content={SITE_NAME} />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="fa_IR" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:url" content={canonical} />
   <meta property="og:image" content={SHARE_IMAGE} />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={SHARE_IMAGE} />
+  {#if jsonLdHtml}
+    {@html jsonLdHtml}
+  {/if}
 </svelte:head>
-
-{@html jsonLdHtml}

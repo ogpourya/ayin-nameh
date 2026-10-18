@@ -91,21 +91,36 @@
   function onKeydown(event: KeyboardEvent) {
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     const key = persianKeyAlias[event.key] ?? event.key;
+
+    // A focused button or link handles its own Enter/Space; acting here too would double-fire.
+    if (event.target instanceof HTMLElement && event.target.closest('button, a')) {
+      if (key === 'Enter') return;
+    }
+
     if (mode === 'quiz') {
       if (picked === null) {
         const choice = Number(key);
         if (Number.isInteger(choice) && choice >= 1 && choice <= question.options.length) choose(choice);
       } else if (key === 'Enter') {
+        event.preventDefault();
         next();
       }
     } else if (mode === 'result' && key === 'Enter') {
+      event.preventDefault();
       retry();
+    } else if (mode === 'review') {
+      if (key === 'ArrowLeft' && reviewAt + 1 < wrongList.length) reviewAt += 1;
+      else if (key === 'ArrowRight' && reviewAt > 0) reviewAt -= 1;
     }
   }
 
   function optionClass(choice: number, correctAnswer: number, pickedChoice: number | null) {
-    if (choice === correctAnswer) return 'border-green-500 bg-green-50';
-    if (choice === pickedChoice) return 'border-red-500 bg-red-50';
+    if (choice === correctAnswer) {
+      return 'border-green-500 bg-green-50 text-green-950 dark:border-green-500/80 dark:bg-green-950/60 dark:text-green-100';
+    }
+    if (choice === pickedChoice) {
+      return 'border-red-500 bg-red-50 text-red-950 dark:border-red-500/80 dark:bg-red-950/60 dark:text-red-100';
+    }
     return 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 opacity-50';
   }
 
@@ -127,19 +142,21 @@
         class="flex min-h-12 w-full items-center gap-3 rounded-xl border-2 px-3 py-2 text-right transition
           {revealed
           ? optionClass(choice, q.correctAnswer, pickedChoice)
-          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-300 active:scale-[0.99]'}"
+          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-indigo-300 dark:hover:border-indigo-500 active:scale-[0.99]'}"
       >
         <span
           class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-sm font-bold
-            {revealed ? optionBadgeClass(choice, q.correctAnswer, pickedChoice) : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}"
+            {revealed ? optionBadgeClass(choice, q.correctAnswer, pickedChoice) : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}"
         >
           {toPersianDigits(choice)}
         </span>
         <span class="flex-1 leading-7">{option}</span>
         {#if revealed && choice === q.correctAnswer}
-          <Check size={18} class="shrink-0 text-green-600" />
+          <Check size={18} class="shrink-0 text-green-600 dark:text-green-400" aria-hidden="true" />
+          <span class="sr-only">پاسخ صحیح</span>
         {:else if revealed && choice === pickedChoice}
-          <X size={18} class="shrink-0 text-red-600" />
+          <X size={18} class="shrink-0 text-red-600 dark:text-red-400" aria-hidden="true" />
+          <span class="sr-only">پاسخ اشتباه شما</span>
         {/if}
       </button>
     {/each}
@@ -152,24 +169,32 @@
   title={`آزمون اصلی ${toPersianDigits(index)}`}
   subtitle={mode === 'quiz' ? `${toPersianDigits(current + 1)} / ${toPersianDigits(questions.length)}` : ''}
 >
-  <span class="flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs font-bold text-slate-600 dark:text-slate-300">
+  <span class="flex items-center gap-1 rounded-full bg-slate-900/5 px-2.5 py-1 text-xs font-bold text-slate-600 dark:bg-white/10 dark:text-slate-300">
     <Clock size={14} />
     {formatDuration(elapsed)}
   </span>
 </Header>
 
 <div class="p-4">
+  <p class="sr-only" role="status" aria-live="polite">
+    {#if mode === 'quiz' && picked !== null}
+      {picked === question.correctAnswer
+        ? 'پاسخ درست بود.'
+        : `پاسخ اشتباه بود. پاسخ صحیح گزینه ${toPersianDigits(question.correctAnswer)} است.`}
+    {/if}
+  </p>
+
   {#if mode === 'quiz'}
-    <div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" role="progressbar" aria-valuenow={current + 1} aria-valuemin={1} aria-valuemax={questions.length}>
+    <div class="mb-4 h-2 overflow-hidden rounded-full bg-slate-900/10 dark:bg-white/10" role="progressbar" aria-valuenow={current + 1} aria-valuemin={1} aria-valuemax={questions.length}>
       <div
         class="h-full rounded-full bg-indigo-600 transition-all duration-300"
         style={`width: ${((current + 1) / questions.length) * 100}%`}
       ></div>
     </div>
 
-    <div class="fade-in rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
+ <div class="fade-in rounded-3xl glass p-4 ">
       <div class="mb-2 flex items-start justify-between gap-2">
-        <span class="rounded-full bg-indigo-50 dark:bg-indigo-950/70 px-2.5 py-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400">
+        <span class="rounded-full bg-indigo-500/15 px-2.5 py-1 text-[11px] font-bold text-indigo-700 dark:text-indigo-300">
           سوال {toPersianDigits(current + 1)}
         </span>
         <button
@@ -177,9 +202,9 @@
           onclick={() => progress.toggleBookmark(index, question.id)}
           aria-label="نشان‌کردن سوال برای مرور"
           aria-pressed={isBookmarked}
-          class="grid h-9 w-9 place-items-center rounded-full transition hover:bg-slate-100 dark:hover:bg-slate-800"
+          class="grid h-9 w-9 place-items-center rounded-full transition hover:bg-slate-900/5 dark:hover:bg-white/10"
         >
-          <Bookmark size={18} class={isBookmarked ? 'fill-amber-400 text-amber-500' : 'text-slate-400 dark:text-slate-500 dark:text-slate-400'} />
+          <Bookmark size={18} class={isBookmarked ? 'fill-amber-400 text-amber-500' : 'text-slate-400 dark:text-slate-500'} />
         </button>
       </div>
       {#if question.image}
@@ -204,7 +229,7 @@
         {current + 1 === questions.length ? 'دیدن نتیجه' : 'سوال بعدی'}
         <ArrowLeft size={18} />
       </button>
-      <p class="mt-2 text-center text-[11px] text-slate-400 dark:text-slate-500 dark:text-slate-400">
+      <p class="mt-2 text-center text-[11px] text-slate-400 dark:text-slate-500">
         میان‌بر: کلید ۱ تا ۴ برای انتخاب گزینه، Enter برای ادامه
       </p>
     {/if}
@@ -213,19 +238,19 @@
       <div class="text-5xl">{passed ? '🎉' : '😞'}</div>
       <div
         class="stamp mt-4 inline-block rounded-2xl border-4 px-6 py-3 text-2xl font-black
-          {passed ? 'border-green-500 text-green-600' : 'border-red-500 text-red-600'}"
+          {passed ? 'border-green-500 text-green-600 dark:text-green-400' : 'border-red-500 text-red-600 dark:text-red-400'}"
       >
         {passed ? 'قبول شدید!' : 'مردود شدید'}
       </div>
 
-      <div class="mx-auto mt-6 max-w-sm space-y-2 rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 text-sm leading-8 shadow-sm backdrop-blur">
+ <div class="mx-auto mt-6 max-w-sm space-y-2 rounded-3xl glass p-4 text-sm leading-8 ">
         <div class="flex justify-between">
           <span>پاسخ درست</span>
-          <b class="text-green-600">{toPersianDigits(correctCount)} از {toPersianDigits(questions.length)}</b>
+          <b class="text-green-600 dark:text-green-400">{toPersianDigits(correctCount)} از {toPersianDigits(questions.length)}</b>
         </div>
         <div class="flex justify-between">
           <span>پاسخ غلط</span>
-          <b class="text-red-600">{toPersianDigits(wrongCount)}</b>
+          <b class="text-red-600 dark:text-red-400">{toPersianDigits(wrongCount)}</b>
         </div>
         <div class="flex justify-between">
           <span>درصد</span>
@@ -263,7 +288,7 @@
           </button>
           <a
             href={resolve('/')}
-            class="flex min-h-12 items-center justify-center rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.99]"
+            class="flex min-h-12 items-center justify-center rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-[0.99]"
           >
             صفحه اصلی
           </a>
@@ -287,7 +312,7 @@
         </span>
       </div>
 
-      <div class="rounded-2xl border border-white/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/70 p-4 shadow-sm backdrop-blur">
+ <div class="rounded-3xl glass p-4 ">
         {#if questions[wrongList[reviewAt]].image}
           <img
             src={assetUrl(questions[wrongList[reviewAt]].image as string)}
@@ -306,7 +331,7 @@
           type="button"
           disabled={reviewAt === 0}
           onclick={() => (reviewAt -= 1)}
-          class="min-h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40"
+          class="min-h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40"
         >
           قبلی
         </button>
@@ -314,7 +339,7 @@
           type="button"
           disabled={reviewAt + 1 >= wrongList.length}
           onclick={() => (reviewAt += 1)}
-          class="min-h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40"
+          class="min-h-12 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 font-bold text-slate-700 dark:text-slate-200 transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40"
         >
           بعدی
         </button>
